@@ -2,7 +2,7 @@
 #define HEPPY_PYTHIA8HEPMCWRAPPER_HH
 
 #include <Pythia8/Pythia.h>
-#include "Pythia8/Pythia8ToHepMC3.h"
+#include <Pythia8Plugins/HepMC3.h>
 
 #if HEPMC31
 #define HEPMC_ALIAS HepMC3
