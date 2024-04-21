@@ -52,17 +52,28 @@ list(APPEND LHAPDF6_CONFIGURE_COMMAND --prefix=${LHAPDF6_HEPPY_PREFIX})
 
 find_package(Python3 3.6 REQUIRED COMPONENTS Interpreter Development NumPy)
 if (Python3_FOUND)
-	list(APPEND LHAPDF6_CONFIGURE_COMMAND --with-python-include=${Python3_INCLUDE_DIRS})
-	get_filename_component(Python3_EXE_NAME ${Python3_EXECUTABLE} NAME)
-	if (Python3_EXE_NAME STREQUAL "python")
-		get_filename_component(Python3_BINDIR ${Python3_EXECUTABLE} DIRECTORY)
-		list(APPEND LHAPDF6_CONFIGURE_COMMAND --with-python-bin=${Python3_BINDIR})
-	else(Python3_EXE_NAME STREQUAL "python")
-		# work around pythia build that relies on presence of python (not python3 executable)
-		message(STATUS ${CMAKE_CURRENT_BINARY_DIR})
-		execute_process(COMMAND ln -sf ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/python )
-		list(APPEND LHAPDF6_CONFIGURE_COMMAND --with-python-bin=${CMAKE_CURRENT_SOURCE_DIR}/)
-	endif(Python3_EXE_NAME STREQUAL "python")
+    get_filename_component(Python3_EXE_NAME ${Python3_EXECUTABLE} NAME)
+    # If it's already just `python`, there's nothing to be done - LHAPDF should be able
+    # to pick it up. Plus, we can't directly pass the base python path anymore, so we're
+    # dependent on the LHAPDF logic.
+    if (NOT Python3_EXE_NAME STREQUAL "python")
+        # LHAPDF expects to be able to find python itself based on the executable name.
+        # For many versions of python, it can find it via pythonV - eg. python3, python3.10, etc
+        # Although we could just take Python3_VERSION_* (e.g. Python3_VERSION_MAJOR), we don't
+        # know the level of specification that it needs. So to take care of this, we'll remove
+        # `python` from string, and take what remains.
+        string(REPLACE "python" "" Python3_VERSION_EXTRACTED ${Python3_EXE_NAME})
+
+        # If it's empty, then we can fall back to setting the python major version, which is at
+        # least a reasonable assumption.
+        if (Python3_VERSION_EXTRACTED STREQUAL "")
+            set(Python3_VERSION_EXTRACTED ${Python3_VERSION_MAJOR})
+        endif (Python3_VERSION_EXTRACTED STREQUAL "")
+
+        # We want to pass it first so it will be taken as an environment variable (based on the
+        # convention of the call below)
+        list(PREPEND LHAPDF6_CONFIGURE_COMMAND PYTHON_VERSION=${Python3_VERSION_EXTRACTED})
+    endif (NOT Python3_EXE_NAME STREQUAL "python")
 endif(Python3_FOUND)
 
 message(STATUS "configure command: ${LHAPDF6_CONFIGURE_COMMAND}")
