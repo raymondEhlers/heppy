@@ -25,7 +25,7 @@ message(STATUS "${Green}Will use ${MAKE_EXE} when needed.${ColourReset}")
 find_program(CMAKE_C_COMPILER NAMES $ENV{CC} gcc PATHS ENV PATH NO_DEFAULT_PATH)
 find_program(CMAKE_CXX_COMPILER NAMES $ENV{CXX} g++ PATHS ENV PATH NO_DEFAULT_PATH)
 
-set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD 17)
 
 message( STATUS "CMAKE_CURRENT_LIST_DIR: ${CMAKE_CURRENT_LIST_DIR}")
 
@@ -80,7 +80,7 @@ message(STATUS "Extra python directives for FASTJET compilation PYTHON=${Python3
 #set(FASTJET_CONFIGURE_COMMAND ./configure)
 set(FASTJET_CONFIGURE_COMMAND PYTHON=${Python3_EXECUTABLE} PYTHON_CONFIG=${Python3_CONFIG} ./configure)
 
-list(APPEND FASTJET_CONFIGURE_COMMAND --prefix=${FASTJET_HEPPY_PREFIX} --enable-allcxxplugins --enable-pyext)
+list(APPEND FASTJET_CONFIGURE_COMMAND --prefix=${FASTJET_HEPPY_PREFIX} --enable-allcxxplugins --enable-pyext --disable-auto-ptr)
 # list(APPEND FASTJET_CONFIGURE_COMMAND --prefix=${FASTJET_HEPPY_PREFIX} --enable-allcxxplugins --enable-pyext --enable-swig)
 if (ENABLE_CGAL)
 	find_package(CGAL REQUIRED COMPONENTS Core)

@@ -32,7 +32,7 @@ if (SWIG_FOUND)
     message(FATAL_ERROR "${Red}SWIG not found while it is the key package here...${ColourReset}")
 endif(SWIG_FOUND)
 
-set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD 17)
 
 message( STATUS "CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}")
 
